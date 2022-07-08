@@ -53,6 +53,7 @@ import org.springframework.util.StringUtils;
  *
  * @see MapperFactoryBean
  * @since 1.2.0
+ * 扫描 beanDefinition
  */
 public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
@@ -202,12 +203,14 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
    */
   @Override
   public Set<BeanDefinitionHolder> doScan(String... basePackages) {
+    //复用spring容器的扫描方法，扫描 @MapperScan定义的 basePackages
     Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
 
     if (beanDefinitions.isEmpty()) {
       LOGGER.warn(() -> "No MyBatis mapper was found in '" + Arrays.toString(basePackages)
           + "' package. Please check your configuration.");
     } else {
+      //处理beanDefinition
       processBeanDefinitions(beanDefinitions);
     }
 
@@ -233,6 +236,8 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
       // the mapper interface is the original class of the bean
       // but, the actual class of the bean is MapperFactoryBean
+      //修改 mapper接口类对应的beanDefinition，将 bean 原始的 beanClass 设置为 MapperFactoryBean 类
+      // MapperFactoryBean 实现了 FactoryBean，能直接从spring容器获取 mapper的代理类
       definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
       try {
         // for spring-native
@@ -240,7 +245,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
       } catch (ClassNotFoundException ignore) {
         // ignore
       }
-
+      //bean的实际类设置为 MapperFactoryBean
       definition.setBeanClass(this.mapperFactoryBeanClass);
 
       definition.getPropertyValues().add("addToConfig", this.addToConfig);

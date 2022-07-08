@@ -347,6 +347,7 @@ public class MapperScannerConfigurer
    * {@inheritDoc}
    *
    * @since 1.0.2
+   * 后置处理beanDefinition注册
    */
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {

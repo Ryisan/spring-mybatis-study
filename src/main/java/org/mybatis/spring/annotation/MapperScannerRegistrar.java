@@ -50,6 +50,7 @@ import org.springframework.util.StringUtils;
  * @see MapperFactoryBean
  * @see ClassPathMapperScanner
  * @since 1.2.0
+ * ImportBeanDefinitionRegistrar接口是spring的扩展点之一,支持我们注册BeanDefinition对象
  */
 public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
 
@@ -77,9 +78,11 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     }
   }
 
+  //解析 MapperScan注解，构造MapperScannerConfigurer beanDefinition注册到spring容器
   void registerBeanDefinitions(AnnotationMetadata annoMeta, AnnotationAttributes annoAttrs,
       BeanDefinitionRegistry registry, String beanName) {
 
+    //获取 MapperScannerConfigurer的beanDefinitionBuilder
     BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
     builder.addPropertyValue("processPropertyPlaceHolders", true);
 
@@ -113,11 +116,13 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
       builder.addPropertyValue("sqlSessionFactoryBeanName", annoAttrs.getString("sqlSessionFactoryRef"));
     }
 
+    //包路径
     List<String> basePackages = new ArrayList<>();
 
     basePackages.addAll(Arrays.stream(annoAttrs.getStringArray("basePackages")).filter(StringUtils::hasText)
         .collect(Collectors.toList()));
 
+    //将类全限定路径转换为包路径
     basePackages.addAll(Arrays.stream(annoAttrs.getClassArray("basePackageClasses")).map(ClassUtils::getPackageName)
         .collect(Collectors.toList()));
 

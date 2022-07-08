@@ -41,7 +41,8 @@ import org.w3c.dom.Element;
  * @since 1.2.0
  * @see MapperFactoryBean
  * @see ClassPathMapperScanner
- * @see MapperScannerConfigurer
+ * @see
+ *
  */
 
 public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionParser {

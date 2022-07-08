@@ -53,6 +53,7 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
 
+  //mapper接口
   private Class<T> mapperInterface;
 
   private boolean addToConfig = true;
@@ -92,6 +93,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
    */
   @Override
   public T getObject() throws Exception {
+    //mapper接口类决定返回代理实例
     return getSqlSession().getMapper(this.mapperInterface);
   }
 
